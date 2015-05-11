@@ -343,7 +343,7 @@ public class Gleitpunktzahl {
 		}
 		
 		// Check ob Exponent zu groß
-		if(this.exponent -1  > Math.pow(2,sizeExponent)) {
+		if(this.exponent - expOffset  > (int) Math.log(sizeExponent)/Math.log(2)) {
 			this.setInfinite(this.vorzeichen);
 		}
 		return;
@@ -358,6 +358,22 @@ public class Gleitpunktzahl {
 		/*
 		 * TODO: hier ist die Operation denormalisiere zu implementieren.
 		 */
+		
+		// beide zahlen auf den gleichen Exponenten bringen
+		
+		if(a.compareAbsTo(b) >= 1) {	// |a| > |b|
+			while(a != b) {
+				a.exponent--;
+				a.mantisse <<= 1;
+			}
+		} else if(a.compareAbsTo(b) <= -1) {// |a| < |b|
+			while(a != b) {
+				b.exponent--;
+				b.mantisse <<= 1;
+			}
+		} else { // |a| == |b|
+			// d nothing so far...
+		}
 	}
 
 	/**
@@ -372,8 +388,49 @@ public class Gleitpunktzahl {
 		 * Funktionen normalisiere und denormalisiere.
 		 * Achten Sie auf Sonderfaelle!
 		 */
+		Gleitpunktzahl sum = new Gleitpunktzahl();
+		double result = 0D;
+		
+		if(this.isNaN() || r.isNaN()) {
+			sum.setNaN();
+			return sum;
+		}
+		
+		if(this.isInfinite()) {
+			sum.setInfinite(this.vorzeichen);
+			return sum;
+		}
+		
+		if(r.isInfinite()) {
+			sum.setInfinite(r.vorzeichen);
+			return sum;
+		}
+		
+		if(this.isNull()) {
+			return r;
+		}
+		
+		if(r.isNull()) {
+			return this;
+		}
+		
+		denormalisiere(this, r);
+		if(this.compareAbsTo(r) >= 1) { // |this| > |r|
+			result = (this.mantisse * Math.pow(2,this.exponent-r.exponent) + r.mantisse) * Math.pow(2,r.exponent);
+			sum.setDouble(result);
+			sum.normalisiere();
+			return sum;
+		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
+			result = (r.mantisse * Math.pow(2,r.exponent-this.exponent) + this.mantisse) * Math.pow(2,this.exponent);
+			sum.setDouble(result);
+			sum.normalisiere();
+			return sum;
+		} else {	// |this| == |r|
+			this.mantisse <<= 1;
+			this.normalisiere();
+			return this;
+		}
 
-		return new Gleitpunktzahl();
 	}
 
 	/**
@@ -418,10 +475,5 @@ public class Gleitpunktzahl {
 		this.exponent = maxExponent;
 		this.mantisse = 1;
 	}
-	/**
-	 * Checkt Exponentenlänge, ob weiter in-/dekrementiert werden kann.
-	 */
-	public boolean expRange() {
-		return !((byte)this.exponent >= 255 || (byte)this.exponent == 0); 
-	}
+	
 }

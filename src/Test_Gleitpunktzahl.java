@@ -60,16 +60,22 @@ public class Test_Gleitpunktzahl {
 			*/
 			
 			Gleitpunktzahl testwert1 = new Gleitpunktzahl(0.125D);
-			System.out.println("testwert1: " + testwert1.toString() + "fuer den Wert: 0.125\n");
+			System.out.println("testwert1: " + testwert1.toString() + " fuer den Wert: 0.125\n");
 			
 			Gleitpunktzahl testwert2 = new Gleitpunktzahl(16D);
-			System.out.println("testwert2: " + testwert2.toString() + "fuer den Wert: 16.0\n");
+			System.out.println("testwert2: " + testwert2.toString() + " fuer den Wert: 16.0\n");
 			
 			Gleitpunktzahl testwert3 = new Gleitpunktzahl(0.33D);
-			System.out.println("testwert3: " + testwert3.toString() + "fuer den Wert: 0.33\n");
+			System.out.println("testwert3: " + testwert3.toString() + " fuer den Wert: 0.33\n");
 			
 			Gleitpunktzahl testwert4 = new Gleitpunktzahl(32D);
-			System.out.println("testwert4: " + testwert4.toString() + "fuer den Wert: 32.0\n");
+			System.out.println("testwert4: " + testwert4.toString() + " fuer den Wert: 32.0\n");
+			
+			Gleitpunktzahl testwert5 = new Gleitpunktzahl(0D);
+			System.out.println("testwert5: " + testwert5.toString() + " fuer den Wert: 0.0\n");
+			
+			Gleitpunktzahl testwert6 = new Gleitpunktzahl(10D);
+			System.out.println("testwert6: " + testwert6.toString() + " fuer den Wert: 10.0\n");
 			
 			
 			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
