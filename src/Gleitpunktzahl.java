@@ -297,57 +297,56 @@ public class Gleitpunktzahl {
 		 * Achten Sie auf Sonderfaelle!
 		 */
 		
+		
 		// Null Fall
 		if(this.mantisse == 0) {
 			this.setNull();
 		}
 		
 		// Fall Mantisse zu groß
-		if(this.mantisse > sizeMantisse) {
-
-			// exponenten bits neu berechnen
-			int difference = this.mantisse - sizeMantisse; // Differenz zum gewünschten Exponenten
-			int counter = difference;
-			while(counter != 0) {
-				if(counter % 2 == 0) {
-					counter /= 2;	
-					this.exponent <<= 0b00000001;	// shift nach links um ein Bit
-				} else {
-					counter -= 1;
-					this.exponent |= 0b00000001;		// letztes Bit 1 setzen
-				}
+		int max_Mantisse_Number = (int) Math.pow(2,sizeMantisse);
+		int min_Mantisse_Number = (int) Math.pow(2,sizeMantisse-1);
+		if(this.mantisse >= max_Mantisse_Number) {
+			
+			// herausfinden um wie viele Bit-Stellen, die Mantisse größer ist
+			int bit_diff = 1;
+			while(Math.pow(2,bit_diff)*max_Mantisse_Number < this.mantisse) {
+				bit_diff++;
 			}
 			
 			// mantisse runden
-			this.mantisse >>= difference-1;	// alle stellen hinter dem entscheidenden runden-bit wegshiften
+			this.mantisse >>= bit_diff-1;	// alle stellen hinter dem entscheidenden runden-bit wegshiften
 			if(this.mantisse % 2 == 1) {			// aufrunden
 				this.mantisse >>= 1;
 				this.mantisse += 0b00000001;
 			} else {								// abrunden 
 				this.mantisse >>= 1;
 			}
-			return;
+			
+			this.exponent += bit_diff;
+			
 		}
 		
 		// Fall mantisse zu klein
-		else if(this.mantisse < sizeMantisse) {
-			// exponenten bits neu berechnen
-			int difference = sizeMantisse - this.mantisse; // Differenz zum gewünschten Exponenten
-			int counter = difference;
-			while(counter != 0) {
-				if(counter % 2 == 0) {
-					counter /= 2;
-					this.exponent >>= 1;	// shift nach rechts um ein Bit
-				} else {
-					counter -= 1;
-					this.exponent &= 0; 	// letztes Bit 0 setzen 
-				}
+		else if(this.mantisse <= min_Mantisse_Number) {
+			
+			// herausfinden um wie viele Bit-Stellen, die Mantisse kleiner ist
+			int bit_diff = 1;
+			while(Math.pow(2,bit_diff*(-1))*max_Mantisse_Number > this.mantisse) {
+				bit_diff++;
 			}
 			
 			// mantisse nach hinten verlängern
-			this.mantisse <<= difference;
-			return;
+			this.mantisse <<= bit_diff;
+			this.exponent -= bit_diff;
+			
 		}
+		
+		// Check ob Exponent zu groß
+		if(this.exponent -1  > Math.pow(2,sizeExponent)) {
+			this.setInfinite(this.vorzeichen);
+		}
+		return;
 	}
 
 	/**

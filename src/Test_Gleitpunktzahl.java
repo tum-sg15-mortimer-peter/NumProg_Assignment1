@@ -41,13 +41,11 @@ public class Test_Gleitpunktzahl {
 			x = new Gleitpunktzahl(0.5);
 
 			// Eigene Prints
-			System.out.println(x.toString());
+			System.out.println("x.toString(): " + x.toString() + " fuer den Wert: 0.5");
 
 			// Referenzwerte setzen
 			gleitref = new Gleitpunktzahl(0.5);
 			
-			// Eigene Prints
-			System.out.println(gleitref.toString());
 
 			// Test, ob Ergebnis korrekt
 			if (x.compareAbsTo(gleitref) != 0
@@ -61,8 +59,19 @@ public class Test_Gleitpunktzahl {
 			// Eigene Tests einfuegen
 			*/
 			
+			Gleitpunktzahl testwert1 = new Gleitpunktzahl(0.125D);
+			System.out.println("testwert1: " + testwert1.toString() + "fuer den Wert: 0.125\n");
 			
-
+			Gleitpunktzahl testwert2 = new Gleitpunktzahl(16D);
+			System.out.println("testwert2: " + testwert2.toString() + "fuer den Wert: 16.0\n");
+			
+			Gleitpunktzahl testwert3 = new Gleitpunktzahl(0.33D);
+			System.out.println("testwert3: " + testwert3.toString() + "fuer den Wert: 0.33\n");
+			
+			Gleitpunktzahl testwert4 = new Gleitpunktzahl(32D);
+			System.out.println("testwert4: " + testwert4.toString() + "fuer den Wert: 32.0\n");
+			
+			
 			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
 
 		} catch (Exception e) {
