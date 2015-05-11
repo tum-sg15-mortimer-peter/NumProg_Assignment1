@@ -296,6 +296,58 @@ public class Gleitpunktzahl {
 		 * ist.
 		 * Achten Sie auf Sonderfaelle!
 		 */
+		
+		// Null Fall
+		if(this.mantisse == 0) {
+			this.setNull();
+		}
+		
+		// Fall Mantisse zu groß
+		if(this.mantisse > sizeMantisse) {
+
+			// exponenten bits neu berechnen
+			int difference = this.mantisse - sizeMantisse; // Differenz zum gewünschten Exponenten
+			int counter = difference;
+			while(counter != 0) {
+				if(counter % 2 == 0) {
+					counter /= 2;	
+					this.exponent <<= 0b00000001;	// shift nach links um ein Bit
+				} else {
+					counter -= 1;
+					this.exponent |= 0b00000001;		// letztes Bit 1 setzen
+				}
+			}
+			
+			// mantisse runden
+			this.mantisse >>= difference-1;	// alle stellen hinter dem entscheidenden runden-bit wegshiften
+			if(this.mantisse % 2 == 1) {			// aufrunden
+				this.mantisse >>= 1;
+				this.mantisse += 0b00000001;
+			} else {								// abrunden 
+				this.mantisse >>= 1;
+			}
+			return;
+		}
+		
+		// Fall mantisse zu klein
+		else if(this.mantisse < sizeMantisse) {
+			// exponenten bits neu berechnen
+			int difference = sizeMantisse - this.mantisse; // Differenz zum gewünschten Exponenten
+			int counter = difference;
+			while(counter != 0) {
+				if(counter % 2 == 0) {
+					counter /= 2;
+					this.exponent >>= 1;	// shift nach rechts um ein Bit
+				} else {
+					counter -= 1;
+					this.exponent &= 0; 	// letztes Bit 0 setzen 
+				}
+			}
+			
+			// mantisse nach hinten verlängern
+			this.mantisse <<= difference;
+			return;
+		}
 	}
 
 	/**
@@ -366,5 +418,11 @@ public class Gleitpunktzahl {
 		this.vorzeichen = false;
 		this.exponent = maxExponent;
 		this.mantisse = 1;
+	}
+	/**
+	 * Checkt Exponentenlänge, ob weiter in-/dekrementiert werden kann.
+	 */
+	public boolean expRange() {
+		return !((byte)this.exponent >= 255 || (byte)this.exponent == 0); 
 	}
 }
