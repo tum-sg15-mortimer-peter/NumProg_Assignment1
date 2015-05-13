@@ -290,7 +290,7 @@ public class Gleitpunktzahl {
 	 */
 	public void normalisiere() {
 		/*
-		 * TODO: hier ist die Operation normalisiere zu implementieren.
+		 * hier ist die Operation normalisiere zu implementieren.
 		 * Beachten Sie, dass die Groesse (Anzahl der Bits) des Exponenten
 		 * und der Mantisse durch sizeExponent bzw. sizeMantisse festgelegt
 		 * ist.
@@ -305,7 +305,7 @@ public class Gleitpunktzahl {
 		
 		// Fall Mantisse zu groß
 		int max_Mantisse_Number = (int) Math.pow(2,sizeMantisse);
-		int min_Mantisse_Number = (int) Math.pow(2,sizeMantisse-1);
+		int min_Mantisse_Number = (int) Math.pow(2,sizeMantisse-1)-1;
 		if(this.mantisse >= max_Mantisse_Number) {
 			
 			// herausfinden um wie viele Bit-Stellen, die Mantisse größer ist
@@ -336,7 +336,7 @@ public class Gleitpunktzahl {
 			
 			// herausfinden um wie viele Bit-Stellen, die Mantisse kleiner ist
 			int bit_diff = 1;
-			while(Math.pow(2,bit_diff*(-1))*max_Mantisse_Number > this.mantisse) {
+			while(Math.pow(2,bit_diff*(-1))*min_Mantisse_Number > this.mantisse) {
 				bit_diff++;
 			}
 			
@@ -346,10 +346,16 @@ public class Gleitpunktzahl {
 			
 		}
 		
-		// Check ob Exponent zu groß
-		if(this.exponent - expOffset  > Math.log(sizeExponent)/Math.log(2)) {
+		// Check ob Exponent zu groß 
+		if(this.exponent > maxExponent) {
+			// System.out.println("comparison: " + (this.exponent - expOffset) + " > " + (Math.log(sizeExponent)/Math.log(2)));
 			this.setInfinite(this.vorzeichen);
 		}
+		// zu kleiner exponent
+		if(this.exponent < 0) {
+			this.setNull();
+		}
+		
 		return;
 	}
 
@@ -375,9 +381,7 @@ public class Gleitpunktzahl {
 				b.exponent--;
 				b.mantisse <<= 1;
 			}
-		} else { // |a| == |b|
-			// d nothing so far...
-		}
+		} 
 	}
 
 	/**
@@ -400,11 +404,6 @@ public class Gleitpunktzahl {
 			return sum;
 		}
 		
-		if(this.isInfinite() && r.isInfinite()) {
-			sum.isNaN();
-			return sum;
-		}
-		
 		if(this.isInfinite()) {
 			sum.setInfinite(this.vorzeichen);
 			return sum;
@@ -422,12 +421,14 @@ public class Gleitpunktzahl {
 		if(r.isNull()) {
 			return new Gleitpunktzahl(this);
 		}
-		
+				
 		denormalisiere(this, r);
 		if(this.compareAbsTo(r) >= 1) { // |this| > |r|
 			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [+,+] || [-,-]
-				result = ((this.mantisse/16D) * Math.pow(2,(this.exponent)-(r.exponent)) + (r.mantisse/16D)) * Math.pow(2,r.exponent);
-				sum.setDouble(result);
+				sum.mantisse = (r.mantisse + this.mantisse);
+				sum.exponent = this.exponent;
+				sum.normalisiere();
+				
 				if(this.vorzeichen) {	// [-,-]
 					sum.vorzeichen = true;
 				} else {
@@ -449,10 +450,13 @@ public class Gleitpunktzahl {
 				}
 			}
 			
-		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
+		}
+		
+		else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
 			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [+,+] || [-,-]
-				result = ((r.mantisse/16D) * Math.pow(2,r.exponent-this.exponent) + (this.mantisse/16D)) * Math.pow(2,this.exponent);
-				sum.setDouble(result);
+				sum.mantisse = (r.mantisse + this.mantisse);
+				sum.exponent = this.exponent;
+				sum.normalisiere();
 				if(r.vorzeichen) {	// [-,-]
 					sum.vorzeichen = true;
 				} else {
@@ -474,7 +478,9 @@ public class Gleitpunktzahl {
 				}
 			}
 			
-		} else {	// |this| == |r|
+		} 
+		
+		else {	// |this| == |r|
 			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {
 				sum = new Gleitpunktzahl(this);
 				sum.mantisse <<= 1;
@@ -509,7 +515,7 @@ public class Gleitpunktzahl {
 		}
 		
 		if(this.isInfinite() && r.isInfinite()) {
-			diff.isNaN();
+			diff.setNaN();
 			return diff;
 		}
 		
@@ -520,15 +526,29 @@ public class Gleitpunktzahl {
 		
 		if(r.isInfinite()) {
 			diff.setInfinite(r.vorzeichen);
+			diff.vorzeichen = !diff.vorzeichen;
 			return diff;
 		}
+		
+		if(r.isNull()) {
+			diff = new Gleitpunktzahl(this);
+			return diff;
+		}
+		
+		if(this.isNull()) {
+			diff = new Gleitpunktzahl(r);
+			diff.vorzeichen = !r.vorzeichen;
+			return diff;
+		}
+
 		
 		denormalisiere(this, r);
 		
 		if(this.compareAbsTo(r) >= 1) { // |this| > |r|
 			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [this,r] = [+,+] || [-,-]
-				result = ((this.mantisse/16D) * Math.pow(2,this.exponent-r.exponent) - (r.mantisse/16D)) * Math.pow(2,r.exponent);
-				diff.setDouble(result);
+				diff.mantisse = (this.mantisse - r.mantisse);
+				diff.exponent = this.exponent;
+				diff.normalisiere();
 				if(this.vorzeichen && r.vorzeichen) {	// [-,-]
 					diff.vorzeichen = true;
 				}
@@ -555,25 +575,38 @@ public class Gleitpunktzahl {
 					diff.vorzeichen = false;
 					return diff;
 				} else {	// [-,+]
+					this.vorzeichen = false;
 					diff = this.add(r);
+					this.vorzeichen = true;
+					diff.vorzeichen = true;
 					return diff;
 				}
 			}	
-		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
-			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {// [this,r] = [+,+] || [-,-]
+		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r| 
+			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) { // [this,r] = [+,+] || [-,-]
 				if(!this.vorzeichen) {	// [+,+]
 					diff = r.sub(this);
 					diff.vorzeichen = true;
 					return diff;
 				} else {	// [-,-]
 					diff = r.sub(this);
-					diff.vorzeichen = !diff.vorzeichen;
+					diff.vorzeichen = false;
 					return diff;
 				}
 			} else {	// [this,r] = [+,-] || [-,+]
-				diff = r.add(this);
-				diff.vorzeichen = !diff.vorzeichen;
-				return diff;
+				if(this.vorzeichen) {	// [-,+]
+					this.vorzeichen = false;
+					diff = this.add(r);
+					this.vorzeichen = true;
+					diff.vorzeichen = true;
+					return diff;
+				} else {	// [+,-]
+					r.vorzeichen = false;
+					diff = this.add(r);
+					r.vorzeichen = true;
+					diff.vorzeichen = false;
+					return diff;
+				}
 			}
 		}
 		

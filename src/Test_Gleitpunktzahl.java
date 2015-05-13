@@ -23,8 +23,8 @@ public class Test_Gleitpunktzahl {
 		 * Verglichen werden die BitFelder fuer Mantisse und Exponent und das
 		 * Vorzeichen
 		 */
-		Gleitpunktzahl.setSizeMantisse(4);
-		Gleitpunktzahl.setSizeExponent(2);
+		Gleitpunktzahl.setSizeMantisse(8);	// 8
+		Gleitpunktzahl.setSizeExponent(4);	// 4
 
 		Gleitpunktzahl x;
 		Gleitpunktzahl y;
@@ -37,6 +37,7 @@ public class Test_Gleitpunktzahl {
 		/* Test von setDouble */
 		System.out.println("Test von setDouble");
 		try {
+			/*
 			// Test: setDouble
 			x = new Gleitpunktzahl(0.5);
 
@@ -54,14 +55,15 @@ public class Test_Gleitpunktzahl {
 			} else {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
+			*/
 
 			/*************
 			// Eigene Tests einfuegen
 			*/
-			
+			/*
 			Gleitpunktzahl testwert1 = new Gleitpunktzahl(0.125D);
 			System.out.println("testwert1: " + testwert1.toString() + " fuer den Wert: 0.125\n");
-			
+			*/
 			Gleitpunktzahl testwert2 = new Gleitpunktzahl(16D);
 			System.out.println("testwert2: " + testwert2.toString() + " fuer den Wert: 16.0\n");
 			
@@ -89,6 +91,10 @@ public class Test_Gleitpunktzahl {
 			Gleitpunktzahl testwert10 = new Gleitpunktzahl(3.25D);
 			System.out.println("testwert10: " + testwert10.toString() + " fuer den Wert: 3.25\n");
 			
+			Gleitpunktzahl testwert11 = new Gleitpunktzahl(-0.6D);
+			System.out.println("testwert11: " + testwert11.toString() + " fuer den Wert: -0.6\n");
+			
+			
 			
 			
 			
@@ -113,8 +119,8 @@ public class Test_Gleitpunktzahl {
 			gleitref = new Gleitpunktzahl(3.25 + 0.5);
 
 			// Berechnung
-			// gleiterg = x.add(y);
-			/*
+			gleiterg = x.add(y);
+			
 			// Test, ob Ergebnis korrekt
 			if (gleiterg.compareAbsTo(gleitref) != 0
 					|| gleiterg.vorzeichen != gleitref.vorzeichen) {
@@ -123,15 +129,13 @@ public class Test_Gleitpunktzahl {
 			} else {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
-			*/
+			
 			
 			/*************
 			 * Eigene Tests einfuegen
 			 */
 			
 			System.out.println("Addition Tests:\n");
-			int i = 8;
-			System.out.println("8/16D: " + i/16D);
 			
 			Gleitpunktzahl addtest1_1 = new Gleitpunktzahl(2D);
 			Gleitpunktzahl addtest1_2 = new Gleitpunktzahl(1D);
@@ -162,10 +166,10 @@ public class Test_Gleitpunktzahl {
 			Gleitpunktzahl addtest7_2 = new Gleitpunktzahl(1.0D);
 			System.out.println("Addtest7: -1.5 + 1.0 = " + addtest7_1.add(addtest7_2).toString() + "\n");
 			
+			Gleitpunktzahl addtest8_1 = new Gleitpunktzahl(16D);
+			Gleitpunktzahl addtest8_2 = new Gleitpunktzahl(64D);
+			System.out.println("Addtest8: 16 + 64 = " + addtest8_1.add(addtest8_2).toString() + "\n");
 			
-
-			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
-
 		} catch (Exception e) {
 			System.out.print("Exception bei der Auswertung des Ergebnis!!\n");
 		}
@@ -198,7 +202,46 @@ public class Test_Gleitpunktzahl {
 			 * Eigene Tests einfuegen
 			 */
 
-			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
+			System.out.println("\n\nSubtraktions Tests:\n");
+			
+			Gleitpunktzahl subtest1_1 = new Gleitpunktzahl(2.5D);
+			Gleitpunktzahl subtest1_2 = new Gleitpunktzahl(0.75D);
+			System.out.println("Subtest1: 2.5 - 0.75 = " + subtest1_1.sub(subtest1_2).toString() + "\n");
+
+			Gleitpunktzahl subtest2_1 = new Gleitpunktzahl(-2.5D);
+			Gleitpunktzahl subtest2_2 = new Gleitpunktzahl(-0.75D);
+			System.out.println("Subtest2: -2.5 - -0.75 = " + subtest2_1.sub(subtest2_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest3_1 = new Gleitpunktzahl(-1D);
+			Gleitpunktzahl subtest3_2 = new Gleitpunktzahl(2D);
+			System.out.println("Subtest3: -1.0 - 2.0 = " + subtest3_1.sub(subtest3_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest4_1 = new Gleitpunktzahl(-1D);
+			Gleitpunktzahl subtest4_2 = new Gleitpunktzahl(5D);
+			System.out.println("Subtest4: -1.0 - 5.0 = " + subtest4_1.sub(subtest4_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest5_1 = new Gleitpunktzahl(1D);
+			Gleitpunktzahl subtest5_2 = new Gleitpunktzahl(2D);
+			System.out.println("Subtest5: 1.0 - 2.0 = " + subtest5_1.sub(subtest5_2).toString() + "\n");
+
+			Gleitpunktzahl subtest6_1 = new Gleitpunktzahl(1D);
+			Gleitpunktzahl subtest6_2 = new Gleitpunktzahl(1D);
+			System.out.println("Subtest6: 1.0 - 1.0 = " + subtest6_1.sub(subtest6_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest7_1 = new Gleitpunktzahl(1333331D);
+			Gleitpunktzahl subtest7_2 = new Gleitpunktzahl(13333331D);
+			System.out.println("Subtest7: Inf - Inf = " + subtest7_1.sub(subtest7_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest8_1 = new Gleitpunktzahl(0D);
+			Gleitpunktzahl subtest8_2 = new Gleitpunktzahl(1.5D);
+			System.out.println("Subtest8: 0 - 1.5 = " + subtest8_1.sub(subtest8_2).toString() + "\n");
+			
+			Gleitpunktzahl subtest9_1 = new Gleitpunktzahl(3D);
+			Gleitpunktzahl subtest9_2 = new Gleitpunktzahl(-2D);
+			System.out.println("Subtest9: 3 + -2 = " + subtest9_1.add(subtest9_2).toString() + "\n");
+			
+			
+			
 
 		} catch (Exception e) {
 			System.out.print("Exception bei der Auswertung des Ergebnis!!\n");
@@ -229,16 +272,13 @@ public class Test_Gleitpunktzahl {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
 			
-			/*************
-			 * Eigene Tests einfuegen
-			 */
+			
 
 			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
 
 
 		} catch (Exception e) {
-			System.out
-					.print("Exception bei der Auswertung des Ergebnis in der Klasse Gleitpunktzahl!!\n");
+			System.out.print("Exception bei der Auswertung des Ergebnis in der Klasse Gleitpunktzahl!!\n");
 		}
 
 	}
