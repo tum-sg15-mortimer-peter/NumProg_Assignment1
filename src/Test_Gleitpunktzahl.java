@@ -77,6 +77,23 @@ public class Test_Gleitpunktzahl {
 			Gleitpunktzahl testwert6 = new Gleitpunktzahl(10D);
 			System.out.println("testwert6: " + testwert6.toString() + " fuer den Wert: 10.0\n");
 			
+			Gleitpunktzahl testwert7 = new Gleitpunktzahl(-0.123D);
+			System.out.println("testwert7: " + testwert7.toString() + " fuer den Wert: -0.123\n");
+			
+			Gleitpunktzahl testwert8 = new Gleitpunktzahl(1D);
+			System.out.println("testwert8: " + testwert8.toString() + " fuer den Wert: 1.0\n");
+			
+			Gleitpunktzahl testwert9 = new Gleitpunktzahl(2D);
+			System.out.println("testwert9: " + testwert9.toString() + " fuer den Wert: 2.0\n");
+			
+			Gleitpunktzahl testwert10 = new Gleitpunktzahl(3.25D);
+			System.out.println("testwert10: " + testwert10.toString() + " fuer den Wert: 3.25\n");
+			
+			
+			
+			
+			// System.out.println("log 2/ log 2 " + Math.log(2)/Math.log(2));
+			
 			
 			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
 
@@ -96,8 +113,8 @@ public class Test_Gleitpunktzahl {
 			gleitref = new Gleitpunktzahl(3.25 + 0.5);
 
 			// Berechnung
-			gleiterg = x.add(y);
-
+			// gleiterg = x.add(y);
+			/*
 			// Test, ob Ergebnis korrekt
 			if (gleiterg.compareAbsTo(gleitref) != 0
 					|| gleiterg.vorzeichen != gleitref.vorzeichen) {
@@ -106,10 +123,46 @@ public class Test_Gleitpunktzahl {
 			} else {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
-
+			*/
+			
 			/*************
 			 * Eigene Tests einfuegen
 			 */
+			
+			System.out.println("Addition Tests:\n");
+			int i = 8;
+			System.out.println("8/16D: " + i/16D);
+			
+			Gleitpunktzahl addtest1_1 = new Gleitpunktzahl(2D);
+			Gleitpunktzahl addtest1_2 = new Gleitpunktzahl(1D);
+			Gleitpunktzahl sumtest1 = addtest1_1.add(addtest1_2);
+			System.out.println("Addtest1: 2.0 + 1.0 = " + sumtest1.toString() + "\n");
+			
+			Gleitpunktzahl addtest2_1 = new Gleitpunktzahl(3D);
+			Gleitpunktzahl addtest2_2 = new Gleitpunktzahl(2D);
+			System.out.println("Addtest2: 3.0 + 2.0 = " + addtest2_1.add(addtest2_2).toString() + "\n");
+			
+			Gleitpunktzahl addtest3_1 = new Gleitpunktzahl(1D);
+			Gleitpunktzahl addtest3_2 = new Gleitpunktzahl(2D);
+			System.out.println("Addtest3: 1.0 + 2.0 = " + addtest3_1.add(addtest3_2).toString() + "\n");
+			// gleiche Summanden Tests
+			Gleitpunktzahl addtest4_1 = new Gleitpunktzahl(1D);
+			Gleitpunktzahl addtest4_2 = new Gleitpunktzahl(1D);
+			System.out.println("Addtest4: 1.0 + 1.0 = " + addtest4_1.add(addtest4_2).toString() + "\n");
+			
+			Gleitpunktzahl addtest5_1 = new Gleitpunktzahl(0.5D);
+			Gleitpunktzahl addtest5_2 = new Gleitpunktzahl(0.5D);
+			System.out.println("Addtest5: 0.5 + 0.5 = " + addtest5_1.add(addtest5_2).toString() + "\n");
+			
+			Gleitpunktzahl addtest6_1 = new Gleitpunktzahl(2.5D);
+			Gleitpunktzahl addtest6_2 = new Gleitpunktzahl(2.5D);
+			System.out.println("Addtest6: 2.5 + 2.5 = " + addtest6_1.add(addtest6_2).toString() + "\n");
+			// negative Summen
+			Gleitpunktzahl addtest7_1 = new Gleitpunktzahl(-1.5D);
+			Gleitpunktzahl addtest7_2 = new Gleitpunktzahl(1.0D);
+			System.out.println("Addtest7: -1.5 + 1.0 = " + addtest7_1.add(addtest7_2).toString() + "\n");
+			
+			
 
 			System.out.println("\n\nEIGENE TESTS EINFÜGEN!!!!!!!\n\n");
 

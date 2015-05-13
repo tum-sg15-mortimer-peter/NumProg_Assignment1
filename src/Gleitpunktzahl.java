@@ -319,6 +319,10 @@ public class Gleitpunktzahl {
 			if(this.mantisse % 2 == 1) {			// aufrunden
 				this.mantisse >>= 1;
 				this.mantisse += 0b00000001;
+				if(this.mantisse >= max_Mantisse_Number) {
+					this.mantisse >>= 1;
+					this.exponent += 1;
+				}
 			} else {								// abrunden 
 				this.mantisse >>= 1;
 			}
@@ -343,7 +347,7 @@ public class Gleitpunktzahl {
 		}
 		
 		// Check ob Exponent zu groß
-		if(this.exponent - expOffset  > (int) Math.log(sizeExponent)/Math.log(2)) {
+		if(this.exponent - expOffset  > Math.log(sizeExponent)/Math.log(2)) {
 			this.setInfinite(this.vorzeichen);
 		}
 		return;
@@ -362,12 +366,12 @@ public class Gleitpunktzahl {
 		// beide zahlen auf den gleichen Exponenten bringen
 		
 		if(a.compareAbsTo(b) >= 1) {	// |a| > |b|
-			while(a != b) {
+			while(a.exponent != b.exponent) {
 				a.exponent--;
 				a.mantisse <<= 1;
 			}
 		} else if(a.compareAbsTo(b) <= -1) {// |a| < |b|
-			while(a != b) {
+			while(a.exponent != b.exponent) {
 				b.exponent--;
 				b.mantisse <<= 1;
 			}
@@ -396,6 +400,11 @@ public class Gleitpunktzahl {
 			return sum;
 		}
 		
+		if(this.isInfinite() && r.isInfinite()) {
+			sum.isNaN();
+			return sum;
+		}
+		
 		if(this.isInfinite()) {
 			sum.setInfinite(this.vorzeichen);
 			return sum;
@@ -407,28 +416,74 @@ public class Gleitpunktzahl {
 		}
 		
 		if(this.isNull()) {
-			return r;
+			return new Gleitpunktzahl(r);
 		}
 		
 		if(r.isNull()) {
-			return this;
+			return new Gleitpunktzahl(this);
 		}
 		
 		denormalisiere(this, r);
 		if(this.compareAbsTo(r) >= 1) { // |this| > |r|
-			result = (this.mantisse * Math.pow(2,this.exponent-r.exponent) + r.mantisse) * Math.pow(2,r.exponent);
-			sum.setDouble(result);
-			sum.normalisiere();
-			return sum;
+			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [+,+] || [-,-]
+				result = ((this.mantisse/16D) * Math.pow(2,(this.exponent)-(r.exponent)) + (r.mantisse/16D)) * Math.pow(2,r.exponent);
+				sum.setDouble(result);
+				if(this.vorzeichen) {	// [-,-]
+					sum.vorzeichen = true;
+				} else {
+					sum.vorzeichen = false;
+				}
+				return sum;
+			} else {	// [+,-] || [-,+]
+				if(this.vorzeichen) {	// [-,+]
+					this.vorzeichen = false;
+					sum = this.sub(r);
+					sum.vorzeichen = !sum.vorzeichen;
+					this.vorzeichen = true;
+					return sum;
+				} else {	// [+,-]
+					r.vorzeichen = false;	// vorzeichenwechsel für die Berechnung
+					sum = this.sub(r);
+					r.vorzeichen = true;
+					return sum;
+				}
+			}
+			
 		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
-			result = (r.mantisse * Math.pow(2,r.exponent-this.exponent) + this.mantisse) * Math.pow(2,this.exponent);
-			sum.setDouble(result);
-			sum.normalisiere();
-			return sum;
+			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [+,+] || [-,-]
+				result = ((r.mantisse/16D) * Math.pow(2,r.exponent-this.exponent) + (this.mantisse/16D)) * Math.pow(2,this.exponent);
+				sum.setDouble(result);
+				if(r.vorzeichen) {	// [-,-]
+					sum.vorzeichen = true;
+				} else {
+					sum.vorzeichen = false;
+				}
+				return sum;
+			} else {	// [+,-] || [-,+]
+				if(this.vorzeichen) {	// [-,+]
+					this.vorzeichen = false;
+					sum = this.sub(r);
+					sum.vorzeichen = !sum.vorzeichen;
+					this.vorzeichen = true;
+					return sum;
+				} else {	// [+,-]
+					r.vorzeichen = false;	// vorzeichenwechsel für die Berechnung
+					sum = this.sub(r);
+					r.vorzeichen = true;
+					return sum;
+				}
+			}
+			
 		} else {	// |this| == |r|
-			this.mantisse <<= 1;
-			this.normalisiere();
-			return this;
+			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {
+				sum = new Gleitpunktzahl(this);
+				sum.mantisse <<= 1;
+				sum.normalisiere();
+				return sum;
+			} else {
+				sum.setNull();
+				return sum;
+			}
 		}
 
 	}
@@ -445,6 +500,83 @@ public class Gleitpunktzahl {
 		 * Funktionen normalisiere und denormalisiere.
 		 * Achten Sie auf Sonderfaelle!
 		 */
+		Gleitpunktzahl diff = new Gleitpunktzahl();
+		double result = 0D;
+		
+		if(this.isNaN() || r.isNaN()) {
+			diff.setNaN();
+			return diff;
+		}
+		
+		if(this.isInfinite() && r.isInfinite()) {
+			diff.isNaN();
+			return diff;
+		}
+		
+		if(this.isInfinite()) {
+			diff.setInfinite(this.vorzeichen);
+			return diff;
+		}
+		
+		if(r.isInfinite()) {
+			diff.setInfinite(r.vorzeichen);
+			return diff;
+		}
+		
+		denormalisiere(this, r);
+		
+		if(this.compareAbsTo(r) >= 1) { // |this| > |r|
+			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [this,r] = [+,+] || [-,-]
+				result = ((this.mantisse/16D) * Math.pow(2,this.exponent-r.exponent) - (r.mantisse/16D)) * Math.pow(2,r.exponent);
+				diff.setDouble(result);
+				if(this.vorzeichen && r.vorzeichen) {	// [-,-]
+					diff.vorzeichen = true;
+				}
+				return diff;
+			} else {	// [this,r] = [+,-] || [-,+]
+				if(!this.vorzeichen) {	// [+,-]
+					r.vorzeichen = false;
+					diff = this.add(r);
+					r.vorzeichen = true;
+					diff.vorzeichen = false;
+					return diff;
+				} else {	// [-,+]
+					diff = this.add(r);
+					return diff;
+				}
+			}	
+		} else if(this.compareAbsTo(r) == 0) {	// |this| == |r|
+			if(!logicalXOR(this.vorzeichen,r.vorzeichen)) {	// [this,r] = [+,+] || [-,-]
+				diff.setNull();
+				return diff;
+			} else {	// [this,r] = [+,-] || [-,+]
+				if(!this.vorzeichen) {	// [+,-]
+					diff = this.add(r);
+					diff.vorzeichen = false;
+					return diff;
+				} else {	// [-,+]
+					diff = this.add(r);
+					return diff;
+				}
+			}	
+		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
+			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {	// [this,r] = [+,+] || [-,-]
+				if(!this.vorzeichen) {	// [+,+]
+					diff = r.sub(this);
+					diff.vorzeichen = true;
+					return diff;
+				} else {	// [-,-]
+					diff = r.sub(this);
+					diff.vorzeichen = !diff.vorzeichen;
+					return diff;
+				}
+			} else {	// [this,r] = [+,-] || [-,+]
+				diff = r.add(this);
+				diff.vorzeichen = !diff.vorzeichen;
+				return diff;
+			}
+		}
+		
 		 
 		return new Gleitpunktzahl();
 	}
@@ -476,4 +608,10 @@ public class Gleitpunktzahl {
 		this.mantisse = 1;
 	}
 	
+	/**
+	 *  Logisches XOR
+	 */
+	public static boolean logicalXOR(boolean x, boolean y) {
+		return ( ( x || y) && ! ( x && y) );
+	}
 }
