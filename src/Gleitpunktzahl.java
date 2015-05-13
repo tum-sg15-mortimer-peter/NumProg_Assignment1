@@ -560,7 +560,7 @@ public class Gleitpunktzahl {
 				}
 			}	
 		} else if(this.compareAbsTo(r) <= -1) {	// |this| < |r|
-			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {	// [this,r] = [+,+] || [-,-]
+			if(!logicalXOR(this.vorzeichen, r.vorzeichen)) {// [this,r] = [+,+] || [-,-]
 				if(!this.vorzeichen) {	// [+,+]
 					diff = r.sub(this);
 					diff.vorzeichen = true;
