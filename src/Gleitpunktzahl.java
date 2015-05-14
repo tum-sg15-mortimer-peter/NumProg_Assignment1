@@ -348,7 +348,6 @@ public class Gleitpunktzahl {
 		
 		// Check ob Exponent zu groß 
 		if(this.exponent > maxExponent) {
-			// System.out.println("comparison: " + (this.exponent - expOffset) + " > " + (Math.log(sizeExponent)/Math.log(2)));
 			this.setInfinite(this.vorzeichen);
 		}
 		// zu kleiner exponent
@@ -397,11 +396,17 @@ public class Gleitpunktzahl {
 		 * Achten Sie auf Sonderfaelle!
 		 */
 		Gleitpunktzahl sum = new Gleitpunktzahl();
-		double result = 0D;
 		
 		if(this.isNaN() || r.isNaN()) {
 			sum.setNaN();
 			return sum;
+		}
+		
+		if(this.isInfinite() && r.isInfinite()) {
+			if(logicalXOR(this.vorzeichen,r.vorzeichen)) {
+				sum.setNaN();
+				return sum;
+			}
 		}
 		
 		if(this.isInfinite()) {
@@ -507,7 +512,6 @@ public class Gleitpunktzahl {
 		 * Achten Sie auf Sonderfaelle!
 		 */
 		Gleitpunktzahl diff = new Gleitpunktzahl();
-		double result = 0D;
 		
 		if(this.isNaN() || r.isNaN()) {
 			diff.setNaN();
@@ -515,8 +519,10 @@ public class Gleitpunktzahl {
 		}
 		
 		if(this.isInfinite() && r.isInfinite()) {
-			diff.setNaN();
-			return diff;
+			if(!logicalXOR(this.vorzeichen,r.vorzeichen))	{
+				diff.setNaN();
+				return diff;
+			}
 		}
 		
 		if(this.isInfinite()) {

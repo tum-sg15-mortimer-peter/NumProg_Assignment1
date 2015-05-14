@@ -19,7 +19,7 @@ public class FastMath {
 	 * In literature, several of those constants for floats or doubles can be
 	 * found. There's no optimal constant for all cases.
 	 */
-	private static int MAGIC_NUMBER = 1024;
+	private static int MAGIC_NUMBER = 1331;	// <- neue Magic Number
 
 	/**
 	 * belegt die MAGIC_NUMBER mit dem Wert magic
@@ -44,9 +44,25 @@ public class FastMath {
 	 * @return Approximation for 1 / sqrt(x).
 	 */
 	public static Gleitpunktzahl invSqrt(Gleitpunktzahl x) {
+		
+		Gleitpunktzahl result_g = new Gleitpunktzahl();
+		
+		// Sonderfaelle abdecken
+		if(x.isNull() || x.isNaN() || x.vorzeichen || x.isInfinite()) {
+			result_g.setNaN();
+			return result_g;
+		}
 
-		/* TODO: hier den "fast inverse square root" Algorithmus implementieren */
-		return new Gleitpunktzahl();
+		/* TODO hier den "fast inverse square root" Algorithmus implementieren */
+		int result_int = gleitpunktzahlToIEEE(x);
+		
+		result_int /= 2;				// ganzzahlige Division durch 2
+		
+		result_int = MAGIC_NUMBER - result_int;		// Magic Number abziehen
+		
+		result_g = iEEEToGleitpunktzahl(result_int);	
+		
+		return result_g;
 	}
 
 	/**

@@ -31,19 +31,15 @@ public class Test_Gleitpunktzahl {
 		Gleitpunktzahl gleitref = new Gleitpunktzahl();
 		Gleitpunktzahl gleiterg;
 		
-		// Eigene Prints
-		System.out.println(gleitref.toString());
 
 		/* Test von setDouble */
-		System.out.println("Test von setDouble");
+		System.out.println("\nTest von setDouble\n");
 		try {
-			/*
+			
 			// Test: setDouble
 			x = new Gleitpunktzahl(0.5);
 
-			// Eigene Prints
-			System.out.println("x.toString(): " + x.toString() + " fuer den Wert: 0.5");
-
+			
 			// Referenzwerte setzen
 			gleitref = new Gleitpunktzahl(0.5);
 			
@@ -55,15 +51,15 @@ public class Test_Gleitpunktzahl {
 			} else {
 				System.out.println("    Richtiges Ergebnis\n");
 			}
-			*/
+			
 
 			/*************
 			// Eigene Tests einfuegen
 			*/
-			/*
+			
 			Gleitpunktzahl testwert1 = new Gleitpunktzahl(0.125D);
 			System.out.println("testwert1: " + testwert1.toString() + " fuer den Wert: 0.125\n");
-			*/
+			
 			Gleitpunktzahl testwert2 = new Gleitpunktzahl(16D);
 			System.out.println("testwert2: " + testwert2.toString() + " fuer den Wert: 16.0\n");
 			
@@ -94,8 +90,12 @@ public class Test_Gleitpunktzahl {
 			Gleitpunktzahl testwert11 = new Gleitpunktzahl(-0.6D);
 			System.out.println("testwert11: " + testwert11.toString() + " fuer den Wert: -0.6\n");
 			
+			Gleitpunktzahl testwert12 = new Gleitpunktzahl(-0.5D);
+			System.out.println("testwert12: " + testwert12.toString() + " fuer den Wert: -0.5\n");
 			
-			
+			Gleitpunktzahl testwert13 = new Gleitpunktzahl();
+			testwert13.setInfinite(false);
+			System.out.println("testwert13: " + testwert13.toString() + " fuer den Wert: Inf\n");
 			
 			
 			// System.out.println("log 2/ log 2 " + Math.log(2)/Math.log(2));
@@ -240,15 +240,105 @@ public class Test_Gleitpunktzahl {
 			Gleitpunktzahl subtest9_2 = new Gleitpunktzahl(-2D);
 			System.out.println("Subtest9: 3 + -2 = " + subtest9_1.add(subtest9_2).toString() + "\n");
 			
+			Gleitpunktzahl subtest10_1 = new Gleitpunktzahl();
+			Gleitpunktzahl subtest10_2 = new Gleitpunktzahl();
+			subtest10_1.setInfinite(false);
+			subtest10_2.setInfinite(true);
+			System.out.println("Subtest10: Inf - -Inf = " + subtest10_1.sub(subtest10_2).toString() + "\n");
+			subtest10_1.setInfinite(true);
+			subtest10_2.setInfinite(true);
+			System.out.println("Subtest11: -Inf - -Inf = " + subtest10_1.sub(subtest10_2).toString() + "\n");
+			subtest10_1.setInfinite(false);
+			subtest10_2.setNaN();
+			System.out.println("Subtest10: Inf - NaN = " + subtest10_1.sub(subtest10_2).toString() + "\n");
 			
+			System.out.println("\nFast Inverse Square Root Tests:\n");
+			
+			int magic_number = 1331;
+			FastMath.setMagic(magic_number);
+			System.out.println("Magic Number: " + magic_number);
+			
+			Gleitpunktzahl invtest1 = new Gleitpunktzahl(4D);
+			System.out.println("invtest1: " + invtest1.toString());
+			System.out.println("InvTest1: 4D -> " + FastMath.invSqrt(invtest1).toString());
+			System.out.println("Absolute Error: " + FastMath.absInvSqrtErr(invtest1));
+			System.out.println("Relative Error: " + FastMath.relInvSqrtErr(invtest1)+"\n");
+			
+			Gleitpunktzahl invtest2 = new Gleitpunktzahl(-4D);
+			System.out.println("invtest2: " + invtest2.toString());
+			System.out.println("InvTest2: -4D -> " + FastMath.invSqrt(invtest2).toString()+"\n");
 			
 
+			Gleitpunktzahl invtest3 = new Gleitpunktzahl(0D);
+			System.out.println("invtest3: " + invtest3.toString());
+			System.out.println("InvTest3: 0.0 -> " + FastMath.invSqrt(invtest3).toString()+"\n");
+			
+
+			Gleitpunktzahl invtest4 = new Gleitpunktzahl();
+			invtest4.setInfinite(false);
+			System.out.println("invtest4: " + invtest4.toString());
+			System.out.println("InvTest4: Inf -> " + FastMath.invSqrt(invtest4).toString()+"\n");
+			
+			Gleitpunktzahl invtest5 = new Gleitpunktzahl(16D);
+			System.out.println("invtest5: " + invtest5.toString());
+			System.out.println("InvTest5: 16 -> " + FastMath.invSqrt(invtest5).toString());
+			System.out.println("Absolute Error: " + FastMath.absInvSqrtErr(invtest5));
+			System.out.println("Relative Error: " + FastMath.relInvSqrtErr(invtest5)+"\n");
+			
+			
+			/*
+			
+			System.out.println("\n\nNeue Optimale Magic Number ermitteln:\n");
+			int opt_magic_abs = 0;
+			int opt_magic_rel = 0;
+			double low_avg_rel = 10000000;
+			double low_avg_abs = 10000000;
+			double example_values = 100D;
+			double inc_steps = .1D;
+			int magic = 1329;
+			
+			for(;magic < 1340; magic++) {
+				FastMath.setMagic(magic);
+				example_values = 100;
+				
+				double avg_rel = 0;
+				double avg_abs = 0;
+				int loop_counter = 0;
+				Gleitpunktzahl test_g;
+				while(example_values < 150D) {
+					test_g = new Gleitpunktzahl(example_values);
+					avg_rel += FastMath.absInvSqrtErr(test_g);
+					avg_abs += FastMath.relInvSqrtErr(test_g);
+							
+					loop_counter++;
+					example_values += inc_steps; 
+				}
+				
+				// Calculate Average
+				avg_abs /= (double) loop_counter;
+				avg_rel /= (double) loop_counter;
+				
+				if(avg_rel < low_avg_rel) {
+					low_avg_rel = avg_rel;
+					opt_magic_rel = magic;
+				}
+				if(avg_abs < low_avg_abs) {
+					low_avg_abs = avg_abs;
+					opt_magic_abs = magic;
+				}
+				
+			}
+			
+			System.out.println("Opt Magic Abs: " + opt_magic_abs + " with an abs error average of " + low_avg_abs);
+			System.out.println("Opt Magic Rel: " + opt_magic_rel + " with an rel error average of " + low_avg_rel);
+			
+			*/
 		} catch (Exception e) {
 			System.out.print("Exception bei der Auswertung des Ergebnis!!\n");
 		}
 
 		/* Sonderfaelle */
-		System.out.println("Test der Sonderfaelle mit Gleitpunktzahl");
+		System.out.println("\n\nTest der Sonderfaelle mit Gleitpunktzahl");
 
 		try {
 			// Test: Sonderfaelle
